@@ -1,0 +1,9 @@
+-EC@ is in public subnet still cant ping or reach to the postgres?
+-> Cehck security group and make sure it allows traffic on postgres port
+-> modify listen_addresses in /var/lib/pgsql/data/postgresql.conf
+***************IMPORTANT*******************
+-> follow https://www.postgresql.org/docs/14/auth-pg-hba-conf.html
+   https://www.postgresql.org/docs/14/runtime-config-connection.html#GUC-LISTEN-ADDRESSES
+   without configuring these postgres wont listen on a public ip address
+   
+   
