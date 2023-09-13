@@ -2,9 +2,135 @@
 
 {% block content %}
     <h1>{% block title %} Users {% endblock %}</h1>
-    {% for user in users %}
-        <div class='user'>
-            <h3>{{ user[1] }} {{ user[2] }}  {{ user[3] }} {{ user[4] }}</h3>
-        </div>
-    {% endfor %}
+    
+    <!-- Dropdown to select a username -->
+    <label for="username">Select a Username:</label>
+    <select id="username">
+        {% for user in users %}
+            <option value="{{ user[0] }}">{{ user[0] }}</option>
+        {% endfor %}
+    </select>
+    
+    <!-- Container to display user information and editable fields -->
+    <div id="user-info">
+        <h2>User Information</h2>
+        <p><strong>Name:</strong> <input type="text" id="name" /></p>
+        <p><strong>Email:</strong> <input type="text" id="email" /></p>
+        <p><strong>Mobile:</strong> <input type="text" id="mobile" /></p>
+        <button id="save-button">Save</button>
+        <p><span id="response-message"></span></p>
+    </div>
+    
+    <!-- JavaScript to handle user selection and saving -->
+<!-- JavaScript to handle user selection and saving -->
+<!-- JavaScript to handle user selection and saving -->
+<script>
+    // Get the dropdown element
+    var dropdown = document.getElementById("username");
+
+    // Get the user information container
+    var userInfo = document.getElementById("user-info");
+
+    // Get the input fields for name, email, and mobile
+    var nameInput = document.getElementById("name");
+    var emailInput = document.getElementById("email");
+    var mobileInput = document.getElementById("mobile");
+    var responseMessage = document.getElementById("response-message");
+    // Get the save button
+    var saveButton = document.getElementById("save-button");
+
+
+    // Function to fetch and display user details
+    function fetchAndDisplayUserDetails(selectedUsername) {
+        // Get the selected username
+        var selectedUsername = selectedUsername;
+
+        // Reset the input fields
+        nameInput.value = "";
+        emailInput.value = "";
+        mobileInput.value = "";
+
+
+        // Fetch user details from the API
+        fetch(`/user/${selectedUsername}`)
+            .then(response => response.text())
+            .then(data => {
+                // Convert the response text to JSON
+                var user_details = JSON.parse(data);
+
+                // Log the data received from the API for debugging
+                console.log("User Data:", user_details);
+
+                // Populate the input fields with user details
+                nameInput.value = user_details[0][0];
+                emailInput.value = user_details[0][1];
+                mobileInput.value = user_details[0][2];
+
+                // Show the user information container
+                userInfo.style.display = "block";
+                responseMessage.textContent = "";                
+            })
+            .catch(error => {
+                console.error("Error fetching user data:", error);
+            });
+    }
+    // Add an event listener to the dropdown
+    dropdown.addEventListener("change", function() {
+        // Get the selected username
+        var selectedUsername = this.value;
+
+        // Call the function to fetch and display user details
+        fetchAndDisplayUserDetails(selectedUsername);
+    });
+
+    // Call the function to fetch and display user details when the page loads with the initial selected value
+    window.addEventListener("load", function() {
+        var selectedUsername = dropdown.value;
+        if (selectedUsername) {
+            fetchAndDisplayUserDetails(selectedUsername);
+        }
+    });
+
+    // Add an event listener to the save button
+    saveButton.addEventListener("click", function() {
+        // Get the selected username and updated user details
+        var selectedUsername = dropdown.value;
+        var updatedName = nameInput.value;
+        var updatedEmail = emailInput.value;
+        var updatedMobile = mobileInput.value;
+
+        // Log the updated user details for debugging
+        console.log("Updated User Details:", {
+            username: selectedUsername,
+            name: updatedName,
+            email: updatedEmail,
+            mobile: updatedMobile
+        });
+
+        // Send a PUT request to update the user details
+        fetch(`/user/${selectedUsername}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: updatedName,
+                email: updatedEmail,
+                mobile: updatedMobile
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the response message on the page
+            responseMessage.textContent = data.message;
+        })
+        .catch(error => {
+            console.error("Error updating user details:", error);
+            // Display an error message on the page if there's an issue
+            responseMessage.textContent = "Error updating user details.";
+        });
+    });
+</script>
+
+</div>
 {% endblock %}
