@@ -1,0 +1,15 @@
+##User table for storing users of the website
+#connect as postgres to clinic_mgmt database
+psql -h localhost -U postgres -d clinic_mgmt
+
+GRANT ALL ON SCHEMA public TO clinic;
+
+create table users (id serial PRIMARY KEY,
+                    username varchar (100) NOT NULL,
+                    name varchar (100) NOT NULL,
+                    email varchar (100) NOT NULL,
+                    mobile varchar (20) NOT NULL);
+                    
+insert into users (username, name, email, mobile) values ('receptionist', 'Laxmi Gaikwad', 'laxmi@abc.com', '9122331234');
+insert into users (username, name, email, mobile) values ('Dr Anamika', 'Anamika Upase', 'anamika3888@gmail.com', '96239880303');
+insert into users (username, name, email, mobile) values ('Dr. Bhavana ', 'Bhavana Dubey', 'svupase@gmail.com', '9421372952');
